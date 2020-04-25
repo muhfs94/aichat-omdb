@@ -1,0 +1,102 @@
+.main-page--container {
+  margin: auto;
+  width: 65%;
+  margin-top: 50px;
+  padding: 25px;
+  border-radius: 15px !important;
+}
+
+.main-page--search-section {
+  margin-top: 50px;
+}
+
+.main-page--clickable-title {
+  &:hover {
+    color: steelblue;
+    cursor: pointer;
+  }
+}
+
+.modal-header {
+  border: none;
+  padding-bottom: 0px;
+}
+
+.modal-body {
+  padding-top: 0px;
+}
+
+.main-page--table-title {
+  width: 12%;
+}
+
+.main-page--table-year {
+  width: 15%;
+}
+
+.main-page--table-imdb-id {
+  width: 25%;
+}
+
+.main-page--table-favorite {
+  text-align: center;
+  width: 10%;
+}
+
+.main-page--fav-icon-true {
+  color: #ffdc00;
+  stroke: #ffdc00;
+  stroke-width: 1;
+  height: 20px;
+  width: 20px;
+  &:hover {
+    // stroke: black;
+    // stroke-width: 1px;
+    // color: rgba(0,0,0,0);
+    cursor: pointer;
+  }
+}
+
+.main-page--fav-icon-false {
+  color: rgba(0, 0, 0, 0);
+  stroke: black;
+  stroke-width: 1;
+  height: 20px;
+  width: 20px;
+  &:hover {
+    stroke: #ffdc00;
+    stroke-width: 1;
+    color: #ffdc00;
+    cursor: pointer;
+  }
+}
+
+.main-page--search-results {
+  margin: auto;
+  padding-top: 20px;
+  width: 100%;
+}
+
+.main-page--spinner {
+  padding-top: 20px;
+  margin: auto;
+  width: 5%;
+}
+
+.main-page--image-logo {
+  width: 100%;
+  border-radius: 25px !important;
+}
+
+.fav-tab--empty {
+  padding-top: 50px;
+  margin: auto;
+  width: 100%;
+  text-align: center;
+}
+
+.main-page--image-logo-container {
+  margin: auto;
+  width: 85%;
+  margin-bottom: 35px;
+}
