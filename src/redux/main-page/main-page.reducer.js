@@ -38,11 +38,13 @@ const mainPageReducer = (state = INITIAL_STATE, action) => {
       };
     }
     case MainPageActionTypes.HANDLE_IS_FAVORITE_MOVIE: {
-      state.movieData[action.index][action.property] = action.value;
+      let index = state.movieData.findIndex(i => i.imdbID === action.id);
+      state.movieData[index].isFavorite = action.value;
       if (action.value === true) {
-        state.favoriteMovies.push(state.movieData[action.index]);
+        state.favoriteMovies.push(state.movieData[index]);
       } else {
-        state.favoriteMovies.splice(action.index, 1);
+        index = state.favoriteMovies.findIndex(i => i.imdbID === action.id);
+        state.favoriteMovies.splice(index, 1);
       }
       return {
         ...state,
