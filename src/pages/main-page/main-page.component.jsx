@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { mainPageActions } from "../../redux/main-page/main-page.action";
 import {
@@ -13,40 +13,43 @@ import {
   Modal,
   Spinner,
   Image,
+  Badge,
 } from "react-bootstrap";
 import "./main-page.styles.scss";
 
 import { StarFill } from "react-bootstrap-icons";
 
 const MainPage = (props) => {
-  const { movieData, isLoading, favoriteMovies } = props.mainPage;
-  const { handleIsFavorite } = props;
-  const [tableColumns, setTableColumns] = useState([
-    "Title",
-    "Year",
-    "imDB ID",
-    "",
-  ]);
-  const [tableData, setTableData] = useState([
-    {
-      title: "Spiderman 1999",
-      year: "1999",
-      imdbId: "10391203123",
-      favorite: false,
-    },
-    {
-      title: "Spiderman 2000",
-      year: "2000",
-      imdbId: "10391203123",
-      favorite: true,
-    },
-  ]);
-  const [isFavorite, setFavorite] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const {
+    movieData,
+    isLoading,
+    favoriteMovies,
+    resetSearchResults,
+    modalMovie,
+    showModal,
+    fetchMovieLoading,
+    errorMessage,
+  } = props.mainPage;
+  const { handleIsFavorite, fetchMovie, setShowModal, resetModalMovie } = props;
+  const [resultColumns] = useState(["Title", "Year", "imDB ID", ""]);
+  const [favoriteColumns] = useState(["Title", "Year", "Language", ""]);
   const [searchText, setSearchText] = useState("");
 
-  const handleCloseModal = () => setShowModal(false);
-  const handleShowModal = () => setShowModal(true);
+  useEffect(() => {
+    window.addEventListener("beforeunload", handleReload);
+    return () => {
+      window.removeEventListener("beforeunload", handleReload);
+    };
+  }, []);
+
+  const handleReload = () => {
+    resetSearchResults();
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    resetModalMovie();
+  };
   return (
     <Card body className="main-page--container">
       <div className="main-page--image-logo-container">
@@ -78,11 +81,7 @@ const MainPage = (props) => {
                       onChange={(e) => setSearchText(e.target.value)}
                     />
                     <InputGroup.Append>
-                      <Button
-                        size="lg"
-                        type="submit"
-                        variant="outline-secondary"
-                      >
+                      <Button size="lg" type="submit" variant="secondary">
                         Search Movie
                       </Button>
                     </InputGroup.Append>
@@ -90,6 +89,11 @@ const MainPage = (props) => {
                 </Form.Group>
               </Form>
             </div>
+            {!isLoading && errorMessage && movieData.length < 1 ? (
+              <div className="fav-tab--empty">
+                <h5>{errorMessage}</h5>
+              </div>
+            ) : null}
             {isLoading ? (
               <div className="main-page--spinner">
                 <Spinner animation="border" />
@@ -100,7 +104,7 @@ const MainPage = (props) => {
                 <Table responsive>
                   <thead>
                     <tr>
-                      {tableColumns.map((column, index) => (
+                      {resultColumns.map((column, index) => (
                         <th key={column + index}>{column}</th>
                       ))}
                     </tr>
@@ -111,7 +115,7 @@ const MainPage = (props) => {
                         <tr key={index}>
                           <th
                             className="main-page--clickable-title"
-                            onClick={() => handleShowModal()}
+                            onClick={() => fetchMovie(movie.imdbID)}
                           >
                             {movie.Title}
                           </th>
@@ -125,12 +129,16 @@ const MainPage = (props) => {
                             {movie.isFavorite ? (
                               <StarFill
                                 className="main-page--fav-icon-true"
-                                onClick={() => handleIsFavorite(movie.imdbID, false)}
+                                onClick={() =>
+                                  handleIsFavorite(movie.imdbID, false)
+                                }
                               />
                             ) : (
                               <StarFill
                                 className="main-page--fav-icon-false"
-                                onClick={() => handleIsFavorite(movie.imdbID, true)}
+                                onClick={() =>
+                                  handleIsFavorite(movie.imdbID, true)
+                                }
                               />
                             )}
                           </th>
@@ -149,7 +157,7 @@ const MainPage = (props) => {
               <Table responsive>
                 <thead>
                   <tr>
-                    {tableColumns.map((column, index) => (
+                    {favoriteColumns.map((column, index) => (
                       <th key={column + index}>{column}</th>
                     ))}
                   </tr>
@@ -159,19 +167,21 @@ const MainPage = (props) => {
                     <tr key={index}>
                       <th
                         className="main-page--clickable-title"
-                        onClick={() => handleShowModal()}
+                        onClick={() => fetchMovie(movie.imdbID)}
                       >
                         {movie.Title}
                       </th>
                       <th className="main-page--table-year">{movie.Year}</th>
-                      <th className="main-page--table-imdb-id">
-                        {movie.imdbID}
+                      <th className="main-page--table-language">
+                        {movie.Language}
                       </th>
                       <th className="main-page--table-favorite">
                         {movie.isFavorite ? (
                           <StarFill
                             className="main-page--fav-icon-true"
-                            onClick={() => handleIsFavorite(movie.imdbID, false)}
+                            onClick={() =>
+                              handleIsFavorite(movie.imdbID, false)
+                            }
                           />
                         ) : (
                           <StarFill
@@ -192,18 +202,67 @@ const MainPage = (props) => {
           )}
         </Tab>
       </Tabs>
-      <Modal
-        show={showModal}
-        onHide={handleCloseModal}
-        centered
-        scrollable
-        size="lg"
-      >
-        <Modal.Header closeButton>
-          {/* <Modal.Title>Modal heading</Modal.Title> */}
-        </Modal.Header>
-        <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
-      </Modal>
+      {fetchMovieLoading ? (
+        <Modal show={true} dialogAs={Spinner}>
+          <div className="main-page--modal-spinner">
+            <Spinner animation="border" variant="light" />
+          </div>
+        </Modal>
+      ) : null}
+      {!fetchMovieLoading && modalMovie ? (
+        <Modal
+          show={showModal}
+          onHide={handleCloseModal}
+          centered
+          scrollable
+          size="lg"
+        >
+          {/* <Modal.Header closeButton /> */}
+          <Modal.Body>
+            <div className="modal-movie--container">
+              <div className="modal-movie--poster-container">
+                <Image
+                  className="modal-movie--poster"
+                  src={modalMovie.Poster}
+                  fluid
+                  rounded
+                />
+              </div>
+              <div className="modal-movie--content-container">
+                <div className="modal-movie--title">
+                  <h4>{`${modalMovie.Title} (${modalMovie.Year})`}</h4>
+                </div>
+                <div className="modal-movie--plot">{modalMovie.Plot}</div>
+                <div className="modal-movie--imdb-rating">
+                  <b>IMDb Rating:</b> {modalMovie.imdbRating || "-"}/10
+                </div>
+                <div className="modal-movie--released">
+                  <b>Release date:</b> {modalMovie.Released}
+                </div>
+                <div className="modal-movie--director">
+                  <b>Director:</b> {modalMovie.Director}
+                </div>
+                <div className="modal-movie--actors">
+                  <b>Actors:</b> {modalMovie.Actors}
+                </div>
+                <div className="modal-movie--Language">
+                  <b>Language:</b> {modalMovie.Language}
+                </div>
+                <div className="modal-movie--award">
+                  <b>Awards:</b> {modalMovie.Award || "-"}
+                </div>
+                <div className="modal-movie--genres">
+                  {modalMovie.Genre.split(", ").map((genre) => (
+                    <Badge className="modal-movie--genre-badge" variant="dark">
+                      {genre}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Modal.Body>
+        </Modal>
+      ) : null}
     </Card>
   );
 };

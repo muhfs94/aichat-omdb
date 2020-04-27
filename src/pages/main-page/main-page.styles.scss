@@ -1,6 +1,6 @@
 .main-page--container {
   margin: auto;
-  width: 65%;
+  width: 75%;
   margin-top: 50px;
   padding: 25px;
   border-radius: 15px !important;
@@ -22,10 +22,6 @@
   padding-bottom: 0px;
 }
 
-.modal-body {
-  padding-top: 0px;
-}
-
 .main-page--table-title {
   width: 12%;
 }
@@ -34,7 +30,8 @@
   width: 15%;
 }
 
-.main-page--table-imdb-id {
+.main-page--table-imdb-id,
+.main-page--table-language {
   width: 25%;
 }
 
@@ -99,4 +96,43 @@
   margin: auto;
   width: 85%;
   margin-bottom: 35px;
+}
+
+.main-page--modal-spinner {
+  margin: auto;
+  width: 2%;
+  margin-top: 35vh;
+}
+
+.modal-movie--container {
+  display: flex;
+  vertical-align: top;
+}
+.modal-movie--poster-container {
+  margin: auto;
+  width: 40%;
+}
+
+.modal-movie--poster {
+  width: 100%;
+  border-radius: 10px !important;
+}
+
+.modal-movie--content-container {
+  padding-left: 20px;
+  text-align: left;
+  width: 90%;
+}
+
+.modal-movie--plot {
+  padding: 10px 0;
+}
+
+.modal-movie--genres {
+  padding-top: 10px;
+}
+
+.modal-movie--genre-badge {
+  margin: 0px 2px;
+  vertical-align: bottom;
 }
