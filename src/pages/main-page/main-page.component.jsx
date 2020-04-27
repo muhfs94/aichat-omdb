@@ -10,14 +10,14 @@ import {
   Form,
   Button,
   Card,
-  Modal,
   Spinner,
-  Image,
-  Badge,
 } from "react-bootstrap";
 import "./main-page.styles.scss";
-
 import { StarFill } from "react-bootstrap-icons";
+
+import ImageLogo from "../../components/image-logo.component";
+import SpinnerModal from "../../components/spinner-modal.component";
+import ModalMovie from "../../components/modal-movie.component";
 
 const MainPage = (props) => {
   const {
@@ -52,14 +52,7 @@ const MainPage = (props) => {
   };
   return (
     <Card body className="main-page--container">
-      <div className="main-page--image-logo-container">
-        <Image
-          className="main-page--image-logo"
-          src={require("../../assets/search-movies.png")}
-          fluid
-          rounded
-        />
-      </div>
+      <ImageLogo />
       <Tabs defaultActiveKey="search" id="uncontrolled-tab">
         <Tab eventKey="search" title="Search Movie">
           <div className="main-page--search-section">
@@ -202,66 +195,13 @@ const MainPage = (props) => {
           )}
         </Tab>
       </Tabs>
-      {fetchMovieLoading ? (
-        <Modal show={true} dialogAs={Spinner}>
-          <div className="main-page--modal-spinner">
-            <Spinner animation="border" variant="light" />
-          </div>
-        </Modal>
-      ) : null}
+      {fetchMovieLoading ? <SpinnerModal /> : null}
       {!fetchMovieLoading && modalMovie ? (
-        <Modal
-          show={showModal}
-          onHide={handleCloseModal}
-          centered
-          scrollable
-          size="lg"
-        >
-          {/* <Modal.Header closeButton /> */}
-          <Modal.Body>
-            <div className="modal-movie--container">
-              <div className="modal-movie--poster-container">
-                <Image
-                  className="modal-movie--poster"
-                  src={modalMovie.Poster}
-                  fluid
-                  rounded
-                />
-              </div>
-              <div className="modal-movie--content-container">
-                <div className="modal-movie--title">
-                  <h4>{`${modalMovie.Title} (${modalMovie.Year})`}</h4>
-                </div>
-                <div className="modal-movie--plot">{modalMovie.Plot}</div>
-                <div className="modal-movie--imdb-rating">
-                  <b>IMDb Rating:</b> {modalMovie.imdbRating || "-"}/10
-                </div>
-                <div className="modal-movie--released">
-                  <b>Release date:</b> {modalMovie.Released}
-                </div>
-                <div className="modal-movie--director">
-                  <b>Director:</b> {modalMovie.Director}
-                </div>
-                <div className="modal-movie--actors">
-                  <b>Actors:</b> {modalMovie.Actors}
-                </div>
-                <div className="modal-movie--Language">
-                  <b>Language:</b> {modalMovie.Language}
-                </div>
-                <div className="modal-movie--award">
-                  <b>Awards:</b> {modalMovie.Award || "-"}
-                </div>
-                <div className="modal-movie--genres">
-                  {modalMovie.Genre.split(", ").map((genre) => (
-                    <Badge className="modal-movie--genre-badge" variant="dark">
-                      {genre}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </Modal.Body>
-        </Modal>
+        <ModalMovie
+          showModal={showModal}
+          handleCloseModal={handleCloseModal}
+          modalMovie={modalMovie}
+        />
       ) : null}
     </Card>
   );
